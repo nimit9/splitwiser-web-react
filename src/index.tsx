@@ -2,6 +2,10 @@ import { createRoot } from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import Login from './pages/Login';
 import App from './App';
+import AppProvider from './components/Provider';
+import Protected from './components/routes/Protected';
+import UpdateName from './components/profile/UpdateName';
+import Public from './components/routes/Public';
 
 const router = createBrowserRouter([
     {
@@ -9,12 +13,24 @@ const router = createBrowserRouter([
         element: <App />,
         children: [
             {
-                path: '/login',
-                element: <Login />,
+                path: '/',
+                element: <Protected />,
+                children: [
+                    {
+                        path: '/update-name',
+                        element: <UpdateName />,
+                    },
+                ],
             },
             {
-                path: '/update-name',
-                element: <Login />,
+                path: '/login',
+                element: <Public />,
+                children: [
+                    {
+                        path: '/login',
+                        element: <Login />,
+                    },
+                ],
             },
         ],
     },
@@ -22,4 +38,8 @@ const router = createBrowserRouter([
 
 const container = document.getElementById('app');
 const root = createRoot(container!);
-root.render(<RouterProvider router={router} />);
+root.render(
+    <AppProvider>
+        <RouterProvider router={router} />
+    </AppProvider>,
+);

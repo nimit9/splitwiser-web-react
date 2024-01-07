@@ -6,6 +6,8 @@ import OTPInput from '../ui/inputs/OTPInput';
 import AuthSubmitButton from '../ui/buttons/AuthButton';
 import { z } from 'zod';
 import { sendOTP } from '@/utils/login.utils';
+import { api } from '@/utils/axios-util';
+import { AxiosError } from 'axios';
 
 const validOTP = z.string().length(6).regex(/\d/);
 
@@ -28,8 +30,10 @@ const OTPScreen = ({
     const navigate = useNavigate();
 
     const [otp, setOTP] = useState('');
-    const [timer, setTimer] = useState(60); // Initial timer value in seconds
+    const [timer, setTimer] = useState(120); // Initial timer value in seconds
     const [isResendDisabled, setIsResendDisabled] = useState(true);
+
+    const [pastedOTP, setPastedOTP] = useState('');
 
     useEffect(() => {
         let interval: NodeJS.Timeout | undefined;
@@ -48,34 +52,41 @@ const OTPScreen = ({
 
     const handleResendClick = async () => {
         const success = await sendOTP({ phone: otpSentTo });
-        setTimer(120);
-        setIsResendDisabled(true);
+        if (success) {
+            setTimer(120);
+            setIsResendDisabled(true);
+        } else {
+            toast.error('Could not send the OTP, please try again');
+        }
+    };
+
+    const pasteOTP = async () => {
+        const clipboardText = await navigator.clipboard.readText();
+        if (validOTP.safeParse(clipboardText).success) {
+            setPastedOTP(clipboardText);
+        } else {
+            toast.error('Invalid OTP pasted, please try again');
+        }
     };
 
     const verifyOTP = async () => {
         try {
-            const res = await fetch(
-                `http://localhost:8081/api/v1/auth/verify-otp`,
-                {
-                    method: 'POST',
-                    body: JSON.stringify({ otp }),
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                },
+            const response = await api.post(
+                '/auth/verify-otp',
+                JSON.stringify({ otp }),
             );
-            const data = await res.json();
 
-            if (!data.success) {
-                throw new Error(data.msg);
-            } else {
-                if (data.user.isVerified && !data.user.name) {
+            if (response.data.success) {
+                localStorage.setItem('userId', response.data.user._id);
+                if (response.data.user.isVerified && !response.data.user.name) {
                     return navigate('/update-name');
                 }
-                navigate('/');
             }
         } catch (error) {
-            if (error instanceof Error) {
-                toast.error(error.message);
+            if (error instanceof AxiosError) {
+                if (error.response && error.response.status) {
+                    toast.error(error.response.data.msg);
+                }
             }
         }
     };
@@ -92,7 +103,7 @@ const OTPScreen = ({
                             OTP sent to {otpSentTo}
                         </span>
                     </div>
-                    <img src="/otp.webp" width={120} height={72} alt="otp" />
+                    <img src="img/otp.webp" width={120} height={72} alt="otp" />
                 </div>
             </div>
             <div className="py-6 px-4 gap-8 flex flex-col">
@@ -107,8 +118,12 @@ const OTPScreen = ({
                             onOTPChange={(otp: string) => {
                                 setOTP(otp);
                             }}
+                            pastedOTP={pastedOTP}
                         />
-                        <div className="flex items-center gap-1 text-xs text-primary">
+                        <div
+                            className="flex items-center gap-1 text-xs text-primary"
+                            onClick={pasteOTP}
+                        >
                             <BiPaste />
                             <span>PASTE OTP</span>
                         </div>

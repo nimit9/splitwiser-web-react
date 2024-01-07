@@ -1,18 +1,15 @@
 import toast from 'react-hot-toast';
 import { LoginInput } from '../components/login/LoginScreen';
+import { api } from './axios-util';
 
 export const sendOTP = async (loginInput: LoginInput) => {
     try {
-        const res = await fetch(`http://localhost:8081/api/v1/auth/login`, {
-            method: 'POST',
-            body: JSON.stringify(loginInput),
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-        });
-        const data = await res.json();
+        console.log('request');
 
-        if (data.error) {
-            toast.error(data.message);
+        const data = await api.post('/auth/login', JSON.stringify(loginInput));
+
+        if (data?.data?.error) {
+            toast.error(data.data.message);
         } else {
             return true;
         }

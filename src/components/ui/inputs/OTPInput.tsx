@@ -3,9 +3,11 @@ import { KeyboardEvent, useEffect, useRef, useState } from 'react';
 const OTPInput = ({
     length,
     onOTPChange,
+    pastedOTP,
 }: {
     length: number;
     onOTPChange: (otp: string) => void;
+    pastedOTP: string;
 }) => {
     const [otpInput, setOtpInput] = useState(new Array(length).fill(''));
 
@@ -14,6 +16,10 @@ const OTPInput = ({
     }, [otpInput]);
 
     const otpBoxRef = useRef<HTMLInputElement[]>([]);
+
+    useEffect(() => {
+        setOtpInput(pastedOTP.split(''));
+    }, [pastedOTP]);
 
     function handleChange(value: string, index: number) {
         if (value.length > 1) {
