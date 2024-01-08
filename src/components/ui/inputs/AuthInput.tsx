@@ -5,7 +5,8 @@ interface AuthInputProps {
     name: string;
     value: string;
     handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
-    inputRef: RefObject<HTMLInputElement>;
+    inputRef?: RefObject<HTMLInputElement>;
+    placeholder?: string;
 }
 
 const AuthInput = ({
@@ -14,6 +15,7 @@ const AuthInput = ({
     value,
     handleChange,
     inputRef,
+    placeholder,
 }: AuthInputProps) => {
     return (
         <div className="flex flex-col mt-2 mb-4">
@@ -29,13 +31,14 @@ const AuthInput = ({
                     )}
                     <input
                         type="text"
-                        className="w-full text-xl outline-none font-semibold peer bg-transparent placeholder:px-1 border-b border-primary py-1"
+                        className="w-full text-xl outline-none font-semibold peer bg-transparent border-b border-primary py-1 placeholder:font-normal"
                         value={value}
                         ref={inputRef}
                         autoComplete="off"
                         autoFocus
                         onChange={handleChange}
                         name={name}
+                        placeholder={placeholder}
                     />
                 </div>
             }

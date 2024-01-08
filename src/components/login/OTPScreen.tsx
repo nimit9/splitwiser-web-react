@@ -80,6 +80,8 @@ const OTPScreen = ({
                 localStorage.setItem('userId', response.data.user._id);
                 if (response.data.user.isVerified && !response.data.user.name) {
                     return navigate('/update-name');
+                } else {
+                    return navigate('/');
                 }
             }
         } catch (error) {
