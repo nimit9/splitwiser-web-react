@@ -1,12 +1,10 @@
 import { Toaster } from 'react-hot-toast';
 import { Outlet } from 'react-router-dom';
-import AppProvider from './components/Provider';
-import { useApiLoading } from './context/apiLoadingContext';
-import AxiosInterceptor from './components/AxiosInterceptor';
-import useAxiosInterceptor from './components/AxiosInterceptor';
+import { useApiLoading } from '@/context/apiLoadingContext';
+import useAxiosInterceptor from '@/components/AxiosInterceptor';
 
-const App = () => {
-    const { apiLoading, updateApiLoading } = useApiLoading();
+const Root = () => {
+    const { apiLoading } = useApiLoading();
     useAxiosInterceptor();
 
     return (
@@ -22,4 +20,4 @@ const App = () => {
     );
 };
 
-export default App;
+export default Root;

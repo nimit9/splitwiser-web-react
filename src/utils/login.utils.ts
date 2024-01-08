@@ -4,12 +4,13 @@ import { api } from './axios-util';
 
 export const sendOTP = async (loginInput: LoginInput) => {
     try {
-        console.log('request');
+        const response = await api.post(
+            '/auth/login',
+            JSON.stringify(loginInput),
+        );
 
-        const data = await api.post('/auth/login', JSON.stringify(loginInput));
-
-        if (data?.data?.error) {
-            toast.error(data.data.message);
+        if (response?.data?.error) {
+            toast.error(response.data.message);
         } else {
             return true;
         }

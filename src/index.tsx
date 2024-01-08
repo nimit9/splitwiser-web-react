@@ -1,16 +1,17 @@
 import { createRoot } from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import Login from './pages/Login';
-import App from './App';
+
 import AppProvider from './components/Provider';
-import Protected from './components/routes/Protected';
 import UpdateName from './components/profile/UpdateName';
-import Public from './components/routes/Public';
+import Root from './routes/root';
+import Protected from './routes/Protected';
+import Public from './routes/Public';
+import Login from './routes/Login';
 
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <App />,
+        element: <Root />,
         children: [
             {
                 path: '/',

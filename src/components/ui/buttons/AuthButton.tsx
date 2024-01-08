@@ -6,7 +6,7 @@ const AuthSubmitButton = ({
 }: {
     isDisabled: boolean;
     text: string;
-    onSubmit: () => void;
+    onSubmit?: () => void;
     disabledText?: string;
 }) => {
     return (
